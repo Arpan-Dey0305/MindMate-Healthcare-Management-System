@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/track_appointment.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+  </head>
+  <body>
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="{{ url_for('home') }}#services">Services</a>
+        <a href="{{url_for('appointment')}}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{ url_for('health_awareness') }}">Awareness</a>
+        <a href="{{ url_for('home') }}#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="title">
+        <h1>Track Appointment</h1>
+        <p>Check your appointment status and progress</p>
+      </div>
+
+      {% if appointments %} {% for appt in appointments %} {% set status =
+      appt.STATUS %}
+
+      <div class="appointment-card">
+        <div class="card-top">
+          <div>
+            <div class="doctor-name">
+              <i class="fa-solid fa-user-doctor"></i>
+              {{ appt.DOCTOR }}
+            </div>
+            <p>Appointment ID: #{{ appt.ID }}</p>
+          </div>
+
+          <div class="status-badge">{{ appt.STATUS }}</div>
+        </div>
+
+        <div class="details">
+          <div class="detail-box">
+            <small><i class="fa-solid fa-user"></i> Patient</small>
+            <strong>{{ appt.PATIENT_NAME }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <small><i class="fa-solid fa-calendar-days"></i> Date</small>
+            <strong>{{ appt.APPOINTMENT_DATE }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <small><i class="fa-solid fa-clock"></i> Time</small>
+            <strong>{{ appt.APPOINTMENT_TIME }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <small><i class="fa-solid fa-stethoscope"></i> Type</small>
+            <strong>{{ appt.CONSULTATION_TYPE }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <small><i class="fa-solid fa-phone"></i> Mobile</small>
+            <strong>{{ appt.MOBILE }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <small><i class="fa-solid fa-notes-medical"></i> Symptoms</small>
+            <strong>{{ appt.SYMPTOMS }}</strong>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div
+            class="step {% if status in ['Appointment Initiated', 'Doctor Assigned', 'Consultation Scheduled', 'Consultation Completed'] %}active{% endif %}"
+          >
+            <div class="circle">1</div>
+            <p>Appointment Initiated</p>
+          </div>
+
+          <div
+            class="step {% if status in ['Doctor Assigned', 'Consultation Scheduled', 'Consultation Completed'] %}active{% endif %}"
+          >
+            <div class="circle">2</div>
+            <p>Doctor Assigned</p>
+          </div>
+
+          <div
+            class="step {% if status in ['Consultation Scheduled', 'Consultation Completed'] %}active{% endif %}"
+          >
+            <div class="circle">3</div>
+            <p>Consultation Scheduled</p>
+          </div>
+
+          <div
+            class="step {% if status == 'Consultation Completed' %}active{% endif %}"
+          >
+            <div class="circle">4</div>
+            <p>Consultation Completed</p>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %} {% else %}
+      <div class="empty-box">
+        <i class="fa-regular fa-calendar-xmark"></i>
+        <h2>No Appointment Found</h2>
+        <p>You have not booked any appointment yet.</p>
+      </div>
+      {% endif %}
+    </main>
+  </body>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</html>

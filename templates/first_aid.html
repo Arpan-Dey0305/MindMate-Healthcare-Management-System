@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Responsive first aid guide with searchable emergency instructions." />
+  <title>MindMate | First Aid Guides</title>
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+
+  <style>
+    :root {
+      --primary: #e63946;
+      --primary-dark: #b91c2b;
+      --secondary: #132a3a;
+      --accent: #18a999;
+      --bg: #f4f8fa;
+      --surface: #ffffff;
+      --text: #17242d;
+      --muted: #647580;
+      --border: rgba(19, 42, 58, 0.12);
+      --shadow: 0 22px 55px rgba(20, 41, 53, 0.12);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(230, 57, 70, 0.09), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(24, 169, 153, 0.10), transparent 26%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1160px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .top-alert {
+      background: var(--secondary);
+      color: #fff;
+      padding: 11px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .top-alert strong {
+      color: #ffb5ba;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(19, 42, 58, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.18rem;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(230, 57, 70, 0.25);
+      transition: transform 0.3s ease;
+    }
+
+    .brand:hover .brand-mark {
+      transform: rotate(8deg) scale(1.05);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 3px;
+    }
+
+    .brand-mark::before {
+      width: 22px;
+      height: 7px;
+    }
+
+    .brand-mark::after {
+      width: 7px;
+      height: 22px;
+    }
+    .menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 13px;
+      background: var(--secondary);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .menu-btn span,
+    .menu-btn::before,
+    .menu-btn::after {
+      content: "";
+      width: 21px;
+      height: 2px;
+      background: #fff;
+      position: absolute;
+      left: 11px;
+      transition: 0.3s ease;
+    }
+
+    .menu-btn::before { top: 14px; }
+    .menu-btn span { top: 21px; }
+    .menu-btn::after { top: 28px; }
+
+    .menu-btn.active::before {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-btn.active span {
+      opacity: 0;
+    }
+
+    .menu-btn.active::after {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .hero {
+      min-height: 650px;
+      display: grid;
+      align-items: center;
+      padding: 80px 0 70px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 460px;
+      height: 460px;
+      right: -120px;
+      top: 70px;
+      border-radius: 50%;
+      border: 70px solid rgba(230, 57, 70, 0.05);
+      z-index: -1;
+      animation: floatShape 7s ease-in-out infinite;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 70px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(230, 57, 70, 0.09);
+      color: var(--primary-dark);
+      border: 1px solid rgba(230, 57, 70, 0.12);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 0 7px rgba(230, 57, 70, 0.11);
+      animation: pulse 1.8s infinite;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+      max-width: 760px;
+    }
+
+    h1 span {
+      color: var(--primary);
+      display: block;
+    }
+
+    .hero-text {
+      color: var(--muted);
+      font-size: 1.07rem;
+      max-width: 600px;
+      margin: 26px 0 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      border: 0;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(230, 57, 70, 0.24);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 18px 35px rgba(230, 57, 70, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--secondary);
+      border: 1px solid var(--border);
+    }
+
+    .hero-panel {
+      min-height: 485px;
+      padding: 30px;
+      background: linear-gradient(145deg, #17384c, #0d2230);
+      border-radius: 36px;
+      color: #fff;
+      box-shadow: 0 35px 70px rgba(13, 34, 48, 0.23);
+      position: relative;
+      overflow: hidden;
+      animation: heroEnter 0.9s ease both;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      background: rgba(24, 169, 153, 0.2);
+      right: -90px;
+      top: -90px;
+      filter: blur(2px);
+    }
+
+    .medical-cross {
+      width: 145px;
+      height: 145px;
+      margin: 30px auto 42px;
+      position: relative;
+      animation: slowRotate 14s linear infinite;
+    }
+
+    .medical-cross::before,
+    .medical-cross::after {
+      content: "";
+      position: absolute;
+      background: var(--primary);
+      border-radius: 24px;
+      box-shadow: 0 20px 35px rgba(230, 57, 70, 0.25);
+    }
+
+    .medical-cross::before {
+      width: 145px;
+      height: 54px;
+      top: 45px;
+      left: 0;
+    }
+
+    .medical-cross::after {
+      width: 54px;
+      height: 145px;
+      left: 45px;
+      top: 0;
+    }
+
+    .quick-check {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 22px;
+      padding: 23px;
+      backdrop-filter: blur(10px);
+    }
+
+    .quick-check h3 {
+      margin-bottom: 14px;
+      font-size: 1.15rem;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      padding: 11px 0;
+      color: rgba(255,255,255,0.82);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .check-row:last-child {
+      border-bottom: 0;
+    }
+
+    .step-number {
+      flex: 0 0 29px;
+      width: 29px;
+      height: 29px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.12);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    section {
+      padding: 95px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      letter-spacing: -0.055em;
+      line-height: 1;
+      max-width: 650px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      max-width: 490px;
+    }
+
+    .toolbar {
+      background: var(--surface);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 21px;
+      display: flex;
+      gap: 14px;
+      box-shadow: 0 12px 35px rgba(20, 41, 53, 0.06);
+      margin-bottom: 32px;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 51px;
+      border: 1px solid var(--border);
+      background: #f9fbfc;
+      color: var(--text);
+      border-radius: 14px;
+      outline: none;
+      padding: 0 18px;
+      transition: border 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .search-box input:focus {
+      border-color: rgba(230, 57, 70, 0.5);
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.08);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 0 16px;
+      min-height: 51px;
+      cursor: pointer;
+      font-weight: 750;
+      transition: 0.25s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: #fff;
+      background: var(--secondary);
+      border-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .guide-card {
+      background: var(--surface);
+      align-self: start;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: 0 15px 42px rgba(20, 41, 53, 0.07);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      opacity: 0;
+      transform: translateY(28px);
+    }
+
+    .guide-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .guide-card::before {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      right: -38px;
+      top: -38px;
+      background: rgba(230, 57, 70, 0.08);
+      transition: transform 0.45s ease;
+    }
+
+    .guide-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow);
+      border-color: rgba(230, 57, 70, 0.25);
+    }
+
+    .guide-card:hover::before {
+      transform: scale(1.8);
+    }
+
+    .card-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 17px;
+      background: rgba(230, 57, 70, 0.1);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.03rem;
+      margin-bottom: 21px;
+      transition: 0.35s ease;
+    }
+
+    .guide-card:hover .card-icon {
+      background: var(--primary);
+      color: #fff;
+      transform: rotate(-7deg) scale(1.05);
+    }
+
+    .guide-card h3 {
+      font-size: 1.28rem;
+      margin-bottom: 8px;
+    }
+
+    .guide-card > p {
+      color: var(--muted);
+      min-height: 52px;
+      margin-bottom: 18px;
+    }
+
+    .severity {
+      display: inline-block;
+      color: var(--primary-dark);
+      background: rgba(230, 57, 70, 0.08);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    .guide-toggle {
+      width: 100%;
+      border: 0;
+      background: #f4f7f8;
+      padding: 13px 15px;
+      border-radius: 12px;
+      color: var(--secondary);
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.25s ease;
+    }
+
+    .guide-toggle:hover {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .guide-toggle span {
+      transition: transform 0.3s ease;
+    }
+
+    .guide-card.open .guide-toggle span {
+      transform: rotate(45deg);
+    }
+
+    .guide-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 
+        max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+    }
+
+    .guide-details ol {
+    padding: 0 0 0 22px;
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+    }
+
+    .guide-details li {
+      padding: 5px 0;
+    }
+
+    .guide-card.open .guide-details {
+    max-height: 300px; /* adjust if needed */
+    opacity: 1;
+    }
+
+    .guide-card.open .guide-details ol {
+    transform: translateY(0);
+    padding-top: 15px;
+    }
+
+    .guide-card.open:hover {
+      transform: translateY(0);
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 50px;
+      background: #fff;
+      border-radius: var(--radius);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .emergency-section {
+      background: var(--secondary);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emergency-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(230,57,70,0.15), transparent 55%);
+    }
+
+    .emergency-layout {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 45px;
+      align-items: center;
+      position: relative;
+    }
+
+    .emergency-number {
+      background: var(--primary);
+      border-radius: 30px;
+      padding: 38px;
+      text-align: center;
+      box-shadow: 0 22px 50px rgba(0,0,0,0.17);
+      transition: transform 0.3s ease;
+    }
+
+    .emergency-number:hover {
+      transform: scale(1.025) rotate(-1deg);
+    }
+
+    .emergency-number small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      opacity: 0.82;
+    }
+
+    .emergency-number strong {
+      display: block;
+      font-size: clamp(4rem, 10vw, 7rem);
+      line-height: 1;
+      margin: 9px 0;
+    }
+
+    .emergency-content h2 {
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin-bottom: 20px;
+    }
+
+    .emergency-content p {
+      color: rgba(255,255,255,0.72);
+      max-width: 670px;
+      margin-bottom: 24px;
+    }
+
+    .emergency-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .emergency-list div {
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 13px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .kit-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .kit-item {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      transition: 0.3s ease;
+    }
+
+    .kit-item:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 18px 38px rgba(20, 41, 53, 0.1);
+    }
+
+    .kit-item span {
+      display: block;
+      width: 38px;
+      height: 5px;
+      border-radius: 99px;
+      background: var(--accent);
+      margin-bottom: 17px;
+      transition: width 0.3s ease;
+    }
+
+    .kit-item:hover span {
+      width: 68px;
+    }
+
+    .kit-item h3 {
+      margin-bottom: 5px;
+    }
+
+    .kit-item p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .disclaimer {
+      margin-top: 34px;
+      background: rgba(24, 169, 153, 0.08);
+      border: 1px solid rgba(24, 169, 153, 0.18);
+      border-radius: 18px;
+      padding: 20px;
+      color: #3f6265;
+    }
+
+    footer {
+      padding: 34px 0;
+      background: #0b1d29;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .back-top {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 13px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .back-top:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 5px rgba(230,57,70,0.12); }
+      50% { box-shadow: 0 0 0 10px rgba(230,57,70,0); }
+    }
+
+    @keyframes floatShape {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(24px); }
+    }
+
+    @keyframes heroEnter {
+      from { opacity: 0; transform: translateX(40px) scale(0.97); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    @keyframes slowRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 950px) {
+      .hero-grid,
+      .emergency-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+
+      .hero-panel {
+        min-height: auto;
+      }
+
+      .guide-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .kit-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .menu-btn {
+        display: block;
+      }
+      .toolbar {
+        flex-direction: column;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .emergency-list,
+      .kit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: min(100% - 24px, 1160px);
+      }
+
+      h1 {
+        font-size: 2.85rem;
+      }
+
+      section {
+        padding: 72px 0;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .hero-panel {
+        padding: 20px;
+        border-radius: 27px;
+      }
+
+      .medical-cross {
+        transform: scale(0.82);
+        margin-block: 15px 24px;
+      }
+
+      .guide-card {
+        padding: 21px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>    
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{ url_for('first_aid') }}">First Aid</a>
+        <a href="{{ url_for('health_awareness') }}">Awareness</a>
+        <a href="#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+  <div class="top-alert">
+    <strong>Emergency:</strong> Call your local emergency service immediately when a person is unresponsive, not breathing normally, or severely bleeding.
+  </div>
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Act safely. Respond quickly.</div>
+          <h1>Clear first aid guidance <span>when seconds matter.</span></h1>
+          <p class="hero-text">
+            Find simple emergency steps for common injuries and learn how to support a person safely until trained medical help arrives.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#guides" class="btn btn-primary">Explore First Aid Guides</a>
+            <a href="#emergency" class="btn btn-secondary">Emergency Checklist</a>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="medical-cross" aria-hidden="true"></div>
+
+          <div class="quick-check">
+            <h3>Initial emergency check</h3>
+
+            <div class="check-row">
+              <span class="step-number">01</span>
+              <p>Check that the area is safe before approaching.</p>
+            </div>
+
+            <div class="check-row">
+              <span class="step-number">02</span>
+              <p>Check responsiveness, breathing and severe bleeding.</p>
+            </div>
+
+            <div class="check-row">
+              <span class="step-number">03</span>
+              <p>Call emergency services and follow the operator's instructions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guides">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Essential knowledge</div>
+            <h2>Choose a first aid guide</h2>
+          </div>
+          <p>Search by condition or filter the guide cards. Select “View steps” to expand the instructions.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <input
+              type="search"
+              id="guideSearch"
+              placeholder="Search burns, bleeding, choking..."
+              aria-label="Search first aid guides"
+            />
+          </div>
+
+          <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="critical">Critical</button>
+            <button class="filter-btn" data-filter="injury">Injuries</button>
+            <button class="filter-btn" data-filter="medical">Medical</button>
+          </div>
+        </div>
+
+        <div class="guide-grid" id="guideGrid">
+          <article class="guide-card" data-category="injury" data-title="cuts severe bleeding wound">
+            <div class="card-icon">BLD</div>
+            <span class="severity">Urgent</span>
+            <h3>Severe Bleeding</h3>
+            <p>Control heavy external bleeding while emergency help is being arranged.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Use gloves or a barrier when available.</li>
+                <li>Apply steady, firm pressure directly over the wound with clean material.</li>
+                <li>Keep pressure in place and call emergency services.</li>
+                <li>Do not remove an embedded object; press around it.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="injury" data-title="burn scald heat fire">
+            <div class="card-icon">BRN</div>
+            <span class="severity">Prompt care</span>
+            <h3>Burns and Scalds</h3>
+            <p>Cool the injured area and protect it from further damage or contamination.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Move away from the heat source safely.</li>
+                <li>Cool the burn under clean, cool running water.</li>
+                <li>Remove nearby jewellery or clothing unless stuck to the skin.</li>
+                <li>Cover loosely with a clean, non-stick dressing and seek medical advice.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="critical" data-title="choking airway food obstruction">
+            <div class="card-icon">CHK</div>
+            <span class="severity">Emergency</span>
+            <h3>Choking</h3>
+            <p>Recognise a blocked airway and act quickly when the person cannot breathe or speak.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Ask whether the person is choking and encourage coughing if possible.</li>
+                <li>If they cannot cough, speak or breathe, call emergency services.</li>
+                <li>For a conscious adult or child, use trained choking techniques.</li>
+                <li>If they become unresponsive, begin CPR if trained and follow dispatcher instructions.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="critical" data-title="cpr unresponsive cardiac arrest not breathing">
+            <div class="card-icon">CPR</div>
+            <span class="severity">Emergency</span>
+            <h3>Unresponsive Person</h3>
+            <p>Check breathing and begin emergency care when a person does not respond normally.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Check for danger, then check responsiveness and breathing.</li>
+                <li>Call emergency services and request an AED.</li>
+                <li>If not breathing normally, start CPR if trained.</li>
+                <li>If breathing normally, place them in the recovery position when appropriate.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="injury" data-title="fracture broken bone sprain injury">
+            <div class="card-icon">FRA</div>
+            <span class="severity">Assessment needed</span>
+            <h3>Suspected Fracture</h3>
+            <p>Reduce movement and support the injured area while waiting for professional assessment.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Keep the injured person still and comfortable.</li>
+                <li>Support the body part in the position found.</li>
+                <li>Do not try to straighten or push a bone back into place.</li>
+                <li>Seek urgent medical help, especially for severe pain or deformity.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="medical" data-title="fainting unconscious dizzy collapse">
+            <div class="card-icon">FNT</div>
+            <span class="severity">Monitor</span>
+            <h3>Fainting</h3>
+            <p>Help restore blood flow safely and monitor for signs of a more serious condition.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Help the person lie down in a safe place.</li>
+                <li>Loosen tight clothing and allow fresh air.</li>
+                <li>Check breathing and responsiveness.</li>
+                <li>Call emergency services if recovery is delayed or symptoms are severe.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="medical" data-title="seizure epilepsy convulsion">
+            <div class="card-icon">SEZ</div>
+            <span class="severity">Protect</span>
+            <h3>Seizure</h3>
+            <p>Prevent injury, track the duration and keep the airway clear after movements stop.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Clear nearby hazards and protect the head with something soft.</li>
+                <li>Do not restrain the person or put anything in their mouth.</li>
+                <li>Time the seizure and stay with the person.</li>
+                <li>Call emergency services for a prolonged, repeated or first seizure.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="medical" data-title="poison poisoning chemical medicine">
+            <div class="card-icon">PSN</div>
+            <span class="severity">Emergency advice</span>
+            <h3>Suspected Poisoning</h3>
+            <p>Prevent further exposure and obtain immediate professional instructions.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Move away from the substance only when safe.</li>
+                <li>Call emergency services or your local poison centre.</li>
+                <li>Do not induce vomiting unless specifically instructed.</li>
+                <li>Keep the product container or substance information for responders.</li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="guide-card" data-category="medical" data-title="heat exhaustion heatstroke hot weather">
+            <div class="card-icon">HT</div>
+            <span class="severity">Cool quickly</span>
+            <h3>Heat Illness</h3>
+            <p>Move the person to a cooler environment and watch for altered consciousness.</p>
+            <button class="guide-toggle">View steps <span>+</span></button>
+            <div class="guide-details">
+              <ol>
+                <li>Move the person into shade or an air-conditioned area.</li>
+                <li>Loosen excess clothing and cool the skin.</li>
+                <li>Offer small sips of water only if fully alert and able to swallow.</li>
+                <li>Call emergency services for confusion, collapse or suspected heatstroke.</li>
+              </ol>
+            </div>
+          </article>
+        </div>
+
+        <div class="no-results" id="noResults">
+          No matching first aid guide was found. Try another search term.
+        </div>
+      </div>
+    </section>
+
+    <section class="emergency-section" id="emergency">
+      <div class="container emergency-layout">
+        <div class="emergency-number">
+          <small>India emergency number</small>
+          <strong>112</strong>
+          <span>Police, fire and medical emergency assistance</span>
+        </div>
+
+        <div class="emergency-content">
+          <h2>Call for professional help early.</h2>
+          <p>
+            Give your exact location, describe what happened, state how many people are injured and follow the emergency operator’s instructions.
+          </p>
+
+          <div class="emergency-list">
+            <div>Person is unresponsive</div>
+            <div>Breathing is absent or abnormal</div>
+            <div>Severe or uncontrolled bleeding</div>
+            <div>Signs of stroke or heart attack</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="kit">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Be prepared</div>
+            <h2>Basic first aid kit</h2>
+          </div>
+          <p>Store supplies in a dry, accessible place and check expiry dates regularly.</p>
+        </div>
+
+        <div class="kit-grid">
+          <article class="kit-item">
+            <span></span>
+            <h3>Dressings</h3>
+            <p>Sterile gauze, adhesive bandages and wound dressings in several sizes.</p>
+          </article>
+
+          <article class="kit-item">
+            <span></span>
+            <h3>Protection</h3>
+            <p>Disposable gloves, hand sanitiser and a CPR face shield or barrier.</p>
+          </article>
+
+          <article class="kit-item">
+            <span></span>
+            <h3>Useful Tools</h3>
+            <p>Blunt-ended scissors, tweezers, safety pins and a digital thermometer.</p>
+          </article>
+
+          <article class="kit-item">
+            <span></span>
+            <h3>Support Items</h3>
+            <p>Roller bandages, triangular bandages, medical tape and an instant cold pack.</p>
+          </article>
+        </div>
+
+        <div class="disclaimer">
+          <strong>Important:</strong> This website is an educational guide and is not a replacement for certified first aid training, medical diagnosis or emergency care.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p>First Response — First aid information for educational use.</p>
+      <button class="back-top" id="backTop">Back to top</button>
+    </div>
+  </footer>
+
+  <script>
+    const guideButtons = document.querySelectorAll(".guide-toggle");
+
+    function setGuideState(card, open) {
+      const button = card.querySelector(".guide-toggle");
+      card.classList.toggle("open", open);
+      button.firstChild.textContent = open ? "Hide steps " : "View steps ";
+      button.setAttribute("aria-expanded", String(open));
+    }
+
+    guideButtons.forEach(button => {
+      button.setAttribute("aria-expanded", "false");
+
+      button.addEventListener("click", () => {
+        const card = button.closest(".guide-card");
+        const shouldOpen = !card.classList.contains("open");
+
+        document.querySelectorAll(".guide-card.open").forEach(openCard => {
+          if (openCard !== card) setGuideState(openCard, false);
+        });
+
+        setGuideState(card, shouldOpen);
+      });
+    });
+
+    const searchInput = document.getElementById("guideSearch");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const cards = [...document.querySelectorAll(".guide-card")];
+    const noResults = document.getElementById("noResults");
+    let selectedFilter = "all";
+
+    function filterGuides() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const matchesSearch =
+          card.dataset.title.includes(query) ||
+          card.textContent.toLowerCase().includes(query);
+
+        const matchesFilter =
+          selectedFilter === "all" ||
+          card.dataset.category === selectedFilter;
+
+        const shouldShow = matchesSearch && matchesFilter;
+        card.style.display = shouldShow ? "block" : "none";
+
+        if (shouldShow) visibleCount++;
+      });
+
+      noResults.style.display = visibleCount ? "none" : "block";
+    }
+
+    searchInput.addEventListener("input", filterGuides);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        selectedFilter = button.dataset.filter;
+        filterGuides();
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add("visible"), index * 70);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    cards.forEach(card => observer.observe(card));
+
+    document.getElementById("backTop").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

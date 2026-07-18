@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pay Appointment Fee | MindMate</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #eef2ff, #e0f7fa);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .payment-card {
+        width: 100%;
+        max-width: 430px;
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 35px 30px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+        text-align: center;
+      }
+
+      .icon-box {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c63ff, #00bcd4);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+      }
+
+      h2 {
+        color: #222;
+        font-size: 26px;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 28px;
+      }
+
+      .amount-box {
+        background: #f5f7ff;
+        border: 1px solid #dfe3ff;
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 25px;
+      }
+
+      .amount-label {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      .amount {
+        font-size: 34px;
+        font-weight: 800;
+        color: #6c63ff;
+      }
+
+      .details {
+        text-align: left;
+        margin-bottom: 25px;
+        background: #fafafa;
+        border-radius: 14px;
+        padding: 16px;
+      }
+
+      .details p {
+        font-size: 14px;
+        color: #444;
+        margin-bottom: 8px;
+      }
+
+      .details p:last-child {
+        margin-bottom: 0;
+      }
+
+      .pay-btn {
+        width: 100%;
+        border: none;
+        outline: none;
+        padding: 15px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #6c63ff, #00bcd4);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s ease;
+      }
+
+      .pay-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(108, 99, 255, 0.35);
+      }
+
+      .secure-text {
+        margin-top: 18px;
+        font-size: 13px;
+        color: #777;
+      }
+
+      @media (max-width: 480px) {
+        .payment-card {
+          padding: 28px 22px;
+        }
+
+        h2 {
+          font-size: 23px;
+        }
+
+        .amount {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="payment-card">
+      <div class="icon-box">₹</div>
+
+      <h2>Pay Appointment Fee</h2>
+      <p class="subtitle">Complete your payment to confirm your appointment</p>
+
+      <div class="amount-box">
+        <p class="amount-label">Total Amount</p>
+        <p class="amount">₹{{ amount }}</p>
+      </div>
+
+      <div class="details">
+        <p><strong>Service:</strong> Doctor Appointment</p>
+        <p><strong>Payment Mode:</strong> Razorpay Secure Checkout</p>
+        <p><strong>Status:</strong> Pending</p>
+      </div>
+
+      <button id="payBtn" class="pay-btn">Pay ₹{{ amount }}</button>
+
+      <p class="secure-text">🔒 100% secure payment powered by Razorpay</p>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+      const options = {
+        key: "{{ key_id }}",
+        amount: "{{ amount * 100 }}",
+        currency: "INR",
+        name: "MindMate",
+        description: "Doctor Appointment Fee",
+        order_id: "{{ order_id }}",
+
+        handler: function (response) {
+          fetch("{{ url_for('verify_payment') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+          }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status === "success") {
+                window.location.href =
+                    "/payment_receipt/" + data.appointment_id;
+            } else {
+                alert("Payment verification failed.");
+              }
+            });
+        },
+
+        prefill: {
+          name: "{{ user_name }}",
+          email: "{{ user_email }}",
+        },
+
+        theme: {
+          color: "#6c63ff",
+        },
+      };
+
+      document.getElementById("payBtn").onclick = function () {
+        const rzp = new Razorpay(options);
+        rzp.open();
+      };
+    </script>
+  </body>
+</html>

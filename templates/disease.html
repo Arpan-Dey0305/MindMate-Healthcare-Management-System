@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Detection</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+</head>
+
+<body>
+<style>
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background:#07111f;
+    color:white;
+    overflow-x:hidden;
+}
+
+.bg-animation{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 20%, #2563eb55, transparent 30%),
+        radial-gradient(circle at 80% 30%, #ec489955, transparent 30%),
+        radial-gradient(circle at 50% 80%, #22c55e44, transparent 30%);
+    z-index:-1;
+    animation:moveBg 8s infinite alternate ease-in-out;
+}
+
+@keyframes moveBg{
+    from{filter:hue-rotate(0deg);}
+    to{filter:hue-rotate(60deg);}
+}
+
+
+
+.hero{
+    text-align:center;
+    padding:80px 20px 40px;
+}
+
+.hero h1{
+    font-size:48px;
+    background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.hero p{
+    max-width:700px;
+    margin:20px auto;
+    color:#cbd5e1;
+    font-size:18px;
+}
+
+.main-container{
+    width:90%;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:30px;
+}
+
+.detect-card{
+    background:rgba(255,255,255,0.09);
+    border:1px solid rgba(255,255,255,0.16);
+    padding:35px;
+    border-radius:25px;
+    text-align:center;
+    backdrop-filter:blur(14px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    transition:0.4s;
+}
+
+.detect-card:hover{
+    transform:translateY(-12px) scale(1.02);
+    box-shadow:0 25px 80px rgba(59,130,246,0.35);
+}
+
+.detect-card.skin:hover{
+    box-shadow:0 25px 80px rgba(239,68,68,0.35);
+}
+
+.icon{
+    font-size:60px;
+    margin-bottom:15px;
+}
+
+.detect-card h2{
+    margin-bottom:10px;
+    color:#93c5fd;
+}
+
+.detect-card p{
+    color:#cbd5e1;
+    margin-bottom:25px;
+}
+
+.file-box{
+    display:block;
+    padding:18px;
+    border:2px dashed #60a5fa;
+    border-radius:16px;
+    cursor:pointer;
+    margin-bottom:20px;
+    transition:0.3s;
+}
+
+.file-box:hover{
+    background:rgba(96,165,250,0.12);
+}
+
+.file-box input{
+    display:none;
+}
+
+button{
+    padding:14px 22px;
+    width:100%;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(90deg,#2563eb,#7c3aed);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 10px 30px rgba(59,130,246,0.5);
+}
+
+.result-section,
+.advice-section{
+    width:90%;
+    max-width:800px;
+    margin:40px auto;
+}
+
+.result-card,
+.advice-card{
+    background:rgba(255,255,255,0.1);
+    padding:35px;
+    border-radius:25px;
+    text-align:center;
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+}
+
+.result-card h2,
+.advice-card h2{
+    color:#38bdf8;
+    margin-bottom:15px;
+}
+
+.result-card h3{
+    color:#22c55e;
+    font-size:28px;
+}
+
+.result-card img{
+    margin-top:25px;
+    max-width:100%;
+    max-height:360px;
+    border-radius:20px;
+    border:3px solid rgba(255,255,255,0.2);
+}
+
+.advice-card{
+    text-align:left;
+}
+
+.advice-card p{
+    white-space:pre-line;
+    color:#e5e7eb;
+    line-height:1.7;
+}
+
+.warning{
+    margin-top:20px;
+    background:#facc15;
+    color:#111827;
+    padding:18px;
+    border-radius:16px;
+    font-weight:bold;
+}
+
+.loader {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;              /* ALWAYS flex */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+
+    opacity: 0;                 /* hidden by default */
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.spinner{
+    width:70px;
+    height:70px;
+    border:7px solid #334155;
+    border-top:7px solid #38bdf8;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+.loader p{
+    margin-top:20px;
+    color:white;
+    font-size:20px;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#94a3b8;
+}
+
+@media(max-width:768px){
+    .navbar{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .main-container{
+        grid-template-columns:1fr;
+    }
+}
+
+
+.loader.show {
+    /*display: flex;*/
+    opacity: 1;
+    visibility: visible;
+}
+</style>
+<div class="bg-animation"></div>
+
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="{{url_for('home')}}#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{url_for('first_aid')}}">First Aid</a>
+        <a href="{{url_for('health_awareness')}}">Awareness</a>
+        <a href="{{url_for('home')}}#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+
+<section class="hero">
+    <h1>AI Powered Medical Image Detection</h1>
+    <p>Upload medical images and get instant prediction with AI-generated medical guidance.</p>
+</section>
+
+<div class="main-container">
+
+    <!-- Brain Tumor -->
+    <div class="detect-card" id="brain">
+        <div class="icon">🧠</div>
+        <h2>Brain Tumor Detection</h2>
+        <p>Upload MRI image to detect tumor type.</p>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <input type="hidden" name="model_type" value="brain">
+
+            <label class="file-box">
+                <input type="file" name="file" accept="image/*" required>
+                <span>Choose MRI Image</span>
+            </label>
+
+            <button type="submit">Detect Brain Tumor</button>
+        </form>
+    </div>
+
+    <!-- Skin Cancer -->
+    <div class="detect-card skin" id="skin">
+        <div class="icon">🩺</div>
+        <h2>Skin Cancer Detection</h2>
+        <p>Upload skin lesion image to detect cancer type.</p>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <input type="hidden" name="model_type" value="skin">
+
+            <label class="file-box">
+                <input type="file" name="file" accept="image/*" required>
+                <span>Choose Skin Image</span>
+            </label>
+
+            <button type="submit">Detect Skin Cancer</button>
+        </form>
+    </div>
+
+</div>
+
+{% if result %}
+<section class="result-section">
+    <div class="result-card">
+        <h2>Prediction Result</h2>
+        <h3>{{ result }}</h3>
+        <p>Confidence: <strong>{{ Confidence }}</strong></p>
+        <img src="{{ file_path }}" alt="Uploaded Image">
+    </div>
+</section>
+{% endif %}
+
+{% if advice %}
+<section class="advice-section">
+    <div class="advice-card">
+        <h2>AI Medical Report</h2>
+        <p>{{ advice }}</p>
+    </div>
+
+    <div class="warning">
+        ⚠ This AI report is for educational purposes only. Please consult a qualified doctor.
+    </div>
+</section>
+{% endif %}
+
+<div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Analyzing image...</p>
+</div>
+
+<footer>
+    <p>© 2026 AI Medical Detection System</p>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const forms = document.querySelectorAll(".upload-form");
+    const loader = document.getElementById("loader");
+
+    forms.forEach(form => {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // STOP instant reload
+
+            loader.style.display = "flex"; // show loader
+
+            // Small delay so UI updates before submit
+            setTimeout(() => {
+                form.submit(); // now submit
+            }, 1); // 200ms is enough
+        });
+    });
+
+});
+/* document.addEventListener("DOMContentLoaded", () => {
+
+    const forms = document.querySelectorAll(".upload-form");
+    const loader = document.getElementById("loader");
+
+    forms.forEach(form => {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // stop instant reload
+
+            loader.style.display = "flex"; // show loader
+
+            setTimeout(() => {
+                form.submit(); // submit after delay
+            }, 500); // 0.5 sec delay
+        });
+    }); */
+
+    const fileInputs = document.querySelectorAll("input[type='file']");
+
+    fileInputs.forEach(input => {
+        input.addEventListener("change", () => {
+            const fileName = input.files[0]?.name;
+            const span = input.parentElement.querySelector("span");
+
+            if (fileName) {
+                span.textContent = fileName;
+            }
+        });
+    });
+
+</script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

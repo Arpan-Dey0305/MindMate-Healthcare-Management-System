@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>MindMate Admin | Appointments</title>
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+  </head>
+  <style>
+    .admin-menu {
+      position: relative;
+    }
+
+    .admin-name {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 12px 18px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #6c63ff, #00bcd4);
+      color: #fff;
+      font-weight: 600;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 55px;
+      min-width: 150px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    .admin-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 16px;
+      color: #222;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .admin-dropdown a:hover {
+      background: #f2f5ff;
+      color: #6c63ff;
+    }
+
+    .admin-dropdown.show {
+      display: block;
+    }
+    .status-select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #dcdcdc;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .update-btn {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: #00bcd4;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .update-btn:hover {
+      background: #0097a7;
+    }
+    .completed-badge {
+      display: inline-block;
+      background: #16a34a;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+  </style>
+
+  <body>
+    <header class="navbar">
+      <a href="{{ url_for('admin_appointments') }}" class="logo-box">
+        <div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Admin Dashboard</span>
+        </div>
+      </a>
+
+      <div class="admin-menu">
+        <button class="admin-name" onclick="toggleAdminDropdown()">
+          <i class="fa-solid fa-user-shield"></i>
+          Admin
+          <i class="fa-solid fa-caret-down"></i>
+        </button>
+
+        <div class="admin-dropdown" id="adminDropdown">
+          <a href="{{ url_for('logout') }}">
+            <i class="fa-solid fa-right-from-bracket"></i> Log out
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-wrap">
+      <div class="dashboard-title">
+        <h2>Appointment Requests</h2>
+        <p>Manage patient appointment status from here</p>
+      </div>
+
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Patient</th>
+              <th>Contact</th>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Symptoms</th>
+              <th>Status</th>
+              <th>Payment</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for a in appointments %}
+            <tr>
+              <td>#{{ a.id }}</td>
+
+              <td>
+                <strong>{{ a.patient_name }}</strong><br />
+                Age: {{ a.age }}, {{ a.gender }}
+              </td>
+
+              <td>
+                {{ a.email }}<br />
+                {{ a.mobile }}
+              </td>
+
+              <td>{{ a.doctor }}</td>
+              <td>{{ a.appointment_date }}</td>
+              <td>{{ a.appointment_time }}</td>
+              <td>{{ a.consultation_type }}</td>
+              <td>{{ a.symptoms }}</td>
+              <td>
+                {% if a.status == "Consultation Completed" %}
+                <span class="badge completed-badge">Completed</span>
+                {% else %}
+                <span class="badge">{{ a.status }}</span>
+
+                <form
+                  action="{{ url_for('update_status', id=a.id) }}"
+                  method="POST"
+                >
+                  <select name="status" class="status-select">
+                    <option
+                      value="Doctor Assigned"
+                      {% if a.status == "Doctor Assigned" %}selected{% endif %}
+                    >
+                      Doctor Assigned
+                    </option>
+
+                    <option
+                      value="Consultation Scheduled"
+                      {% if a.status == "Consultation Scheduled" %}selected{% endif %}
+                    >
+                      Consultation Scheduled
+                    </option>
+
+                    <option
+                      value="Consultation Completed"
+                      {% if a.status == "Consultation Completed" %}selected{% endif %}
+                    >
+                      Consultation Completed
+                    </option>
+                  </select>
+
+                  <button type="submit" class="update-btn">Update</button>
+                </form>
+                {% endif %}
+              </td>
+              <td>
+              <strong>₹{{ a.doctor_fee }}</strong><br />
+              <span class="badge">{{ a.payment_status }}</span>
+
+              <form
+                action="{{ url_for('update_payment', id=a.id) }}"
+                method="POST"
+              >
+              
+              </form>
+            </td>
+            </tr>
+
+            {% else %}
+            <tr>
+              <td colspan="9" class="empty">No appointments found.</td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script>
+      function toggleAdminDropdown() {
+        document.getElementById("adminDropdown").classList.toggle("show");
+      }
+
+      window.addEventListener("click", function (e) {
+        const menu = document.querySelector(".admin-menu");
+        if (!menu.contains(e.target)) {
+          document.getElementById("adminDropdown").classList.remove("show");
+        }
+      });
+    </script>
+  </body>
+</html>

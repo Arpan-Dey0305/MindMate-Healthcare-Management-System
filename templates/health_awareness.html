@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindMate | Awareness</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+
+<style>
+:root {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --brand-primary: #0ea5a4;
+  --brand-secondary: #10b981;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
+}
+
+body {
+background-color: var(--bg-primary);
+background-image: 
+  radial-gradient(circle at 10% 20%, rgba(14, 165, 164, 0.08) 0%, transparent 40%),
+  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 100px 8% 80px 8%;
+  gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.hero-text {
+  max-width: 600px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 165, 164, 0.1);
+  border: 1px solid rgba(14, 165, 164, 0.2);
+  color: #2dd4bf;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+
+.hero-text h1 {
+  font-size: 58px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+
+.hero-text span {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.desc {
+  margin-bottom: 35px;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.buttons button {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.primary {
+  background: #6ad2af;
+  color: #042f2e;
+  box-shadow: 0 4px 20px rgba(14, 165, 164, 0.3);
+}
+
+.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(14, 165, 164, 0.4);
+}
+
+.secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--glass-border) !important;
+}
+
+.secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-muted) !important;
+}
+
+.hero-img {
+  position: relative;
+}
+
+.hero-img::before {
+  content: '';
+  position: absolute;
+  top: 10%; left: 10%; right: 10%; bottom: 10%;
+  background: var(--brand-primary);
+  filter: blur(80px);
+  opacity: 0.25;
+  z-index: -1;
+}
+
+.hero-img img {
+  width: 800px;
+  max-width: 100%;
+  padding-left: 100px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0px 20px 40px rgba(0,0,0,0.5));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(1deg); }
+}
+
+/* SECTION GLOBAL HEADINGS */
+.section-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+/* TOPICS BENTO GRID */
+.topics {
+  padding: 100px 8%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 35px;
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Asymmetric Bento Span Rules */
+.cards .card:nth-child(1) { grid-column: span 2; }
+.cards .card:nth-child(4) { grid-column: span 2; }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.06), transparent 40%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card:hover {
+  border-color: rgba(14, 165, 164, 0.4);
+  transform: translateY(-4px);
+  background: #fff;
+}
+
+.card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  transition: color 0.3s;
+}
+
+.card:hover h3 {
+  color: #2dd4bf;
+}
+
+.card p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* TIPS SECTION */
+.tips {
+  padding: 60px 8%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.tip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.tip {
+  border: 1px solid var(--glass-border);
+  padding: 16px 28px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 15px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.tip:hover {
+  background: var(--text-main);
+  color: var(--bg-primary);
+  transform: scale(1.05);
+}
+
+/* HIGHLIGHTS SECTION (REPLACES CTA) */
+.highlights {
+  margin: 100px auto;
+  padding: 60px;
+  max-width: 1200px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffffff, #f0fdfa);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+}
+
+.highlight-text h3 {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.highlight-text p {
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.highlight-box {
+  padding: 25px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+.highlight-box i {
+  font-size: 28px;
+  color: var(--brand-primary);
+  margin-bottom: 12px;
+}
+
+.highlight-box h4 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.highlight-box p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.highlight-box:hover {
+  transform: translateY(-5px);
+  border-color: rgba(14, 165, 164, 0.4);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .highlight-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 14px;
+  border-top: 1px solid var(--glass-border);
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cards .card:nth-child(1),
+  .cards .card:nth-child(4) { grid-column: span 1; }
+}
+
+@media(max-width:900px){
+  .navbar { padding: 20px 5%; }
+  .navbar nav { display: none; } /* Standard solution for simplified mobile view */
+  
+  .hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding-top: 60px;
+    gap: 40px;
+  }
+  .hero-text h1 { font-size: 42px; }
+  .buttons { justify-content: center; }
+  .hero-img img { width: 280px; }
+  
+  .cards { grid-template-columns: 1fr; }
+  
+  .cta {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+    padding: 40px 24px;
+  }
+  .cta h3 { font-size: 26px; }
+}
+/* =========================================== */
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(6px);
+}
+
+.modal-content {
+  background: #ffffff;
+  margin: 10% auto;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h2 {
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.close-btn {
+  float: right;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="{{ url_for('home') }}#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{ url_for('first_aid') }}">First Aid</a>
+        <a href="{{ url_for('health_awareness') }}">Awareness</a>
+        <a href="{{ url_for('home') }}#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="tag">💡 Better awareness, better tomorrow</div>
+    <h1>Awareness Today,<br><span>Healthier Tomorrow.</span></h1>
+    <p class="desc">
+      Knowledge is the first step to prevention. Stay informed,
+      make smarter choices, and build a healthier future.
+    </p>
+    <div class="buttons">
+      <button class="primary" onclick="document.getElementById('topics-section').scrollIntoView({behavior: 'smooth'})">Explore Topics</button>
+      
+    </div>
+  </div>
+
+  <div class="hero-img">
+    <img src="{{ url_for('static', filename='images/health_awareness_hero_image.png') }}" alt="health awareness">
+  </div>
+</section>
+
+<section class="topics" id="topics-section">
+  <h2 class="section-title">Health Awareness Topics</h2>
+  <p class="section-subtitle">Dive into curated information vital for maintaining optimal lifestyle habits.</p>
+
+  <div class="cards">
+    <div class="card"><h3>Mental Health</h3><p>Stress management, anxiety recognition, and practical steps toward comprehensive everyday emotional self-care.</p></div>
+    <div class="card"><h3>Heart Health</h3><p>Proactive cardiovascular wellness strategies and healthy everyday choices.</p></div>
+    <div class="card"><h3>Immunity Boost</h3><p>Strengthen your natural biological defenses through nutrition.</p></div>
+    <div class="card"><h3>Diabetes Care</h3><p>Modern clinical insights for strategic daily prevention and continuous management.</p></div>
+    <div class="card"><h3>Respiratory Health</h3><p>Optimizing continuous lung capacity and respiratory functionality over time.</p></div>
+    <div class="card"><h3>Women's Health</h3><p>Targeted diagnostics, specialized resources, and comprehensive lifestyle metrics for every developmental stage.</p></div>
+  </div>
+</section>
+
+<section class="tips">
+  <h2 class="section-title" style="text-align: center;">Daily Health Tips</h2>
+  <p class="section-subtitle" style="text-align: center;">Small adjustments that build long-term wellness.</p>
+
+  <div class="tip-list">
+    <div class="tip">💧 Drink enough water</div>
+    <div class="tip">🥗 Eat balanced meals</div>
+    <div class="tip">🏃 Stay active daily</div>
+    <div class="tip">😴 Sleep 7–8 hours</div>
+    <div class="tip">🧘 Manage stress</div>
+  </div>
+</section>
+
+<section class="highlights">
+  <div class="highlight-text">
+    <h3>Stay Informed, Stay Protected</h3>
+    <p>Trusted health knowledge designed to improve your everyday life.</p>
+  </div>
+
+  <div class="highlight-grid">
+    <div class="highlight-box">
+      <i class="fa-solid fa-shield-heart"></i>
+      <h4>50+</h4>
+      <p>Health Topics</p>
+    </div>
+
+    <div class="highlight-box">
+      <i class="fa-solid fa-user-doctor"></i>
+      <h4>Expert</h4>
+      <p>Reviewed Content</p>
+    </div>
+
+    <div class="highlight-box">
+      <i class="fa-solid fa-calendar-check"></i>
+      <h4>Daily</h4>
+      <p>Health Updates</p>
+    </div>
+
+    <div class="highlight-box">
+      <i class="fa-solid fa-heart-pulse"></i>
+      <h4>100%</h4>
+      <p>Reliable & Safe</p>
+    </div>
+  </div>
+</section>
+<!-- POPUP MODAL -->
+<div class="modal" id="topicModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <p id="modalText"></p>
+  </div>
+</div>
+<footer>
+  &copy; 2026 MindMate &bull; Your Health Companion
+</footer>
+
+<script>
+function subscribe(){
+  alert("Subscribed successfully! Stay healthy 💚");
+}
+
+const modal = document.getElementById("topicModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalText = document.getElementById("modalText");
+
+const topicData = {
+    "Mental Health": "Mental health is a vital aspect of overall well-being that influences how individuals think, feel, and act in their daily lives. It involves learning how to effectively manage stress by adopting healthy coping strategies such as maintaining a balanced routine, engaging in physical activity, and ensuring proper rest. Reducing anxiety is another key component, which can be achieved through techniques like deep breathing, meditation, and limiting exposure to overwhelming situations or negative influences. Practicing mindfulness helps individuals stay present in the moment, allowing them to better understand their emotions and respond calmly rather than react impulsively. Building strong social connections and communicating openly with trusted people can provide emotional support and reduce feelings of isolation. Additionally, maintaining a healthy lifestyle through proper nutrition, regular sleep, and self-care activities contributes significantly to emotional stability. Developing positive thinking patterns, setting realistic goals, and taking time for hobbies or relaxation further enhance mental resilience. By incorporating these daily habits, individuals can gradually improve their emotional well-being, leading to a more balanced, peaceful, and fulfilling life.",
+  "Heart Health": "Heart health is essential for maintaining a long and active life, as the heart plays a crucial role in circulating blood and supplying oxygen and nutrients throughout the body. Keeping your heart strong begins with adopting a proper diet that includes fruits, vegetables, whole grains, lean proteins, and healthy fats while limiting processed foods, excess salt, and sugar. Regular physical activity, such as walking, jogging, cycling, or engaging in sports, helps improve cardiovascular fitness, control weight, and reduce the risk of heart-related diseases. Managing stress levels is also important, as chronic stress can negatively impact heart function over time. Avoiding harmful habits like smoking and excessive alcohol consumption further supports heart health. In addition, maintaining a healthy weight, monitoring blood pressure, cholesterol, and blood sugar levels are key preventive measures. Regular health checkups and consultations with medical professionals help in early detection and timely management of potential issues. By consistently following these healthy lifestyle practices, individuals can significantly reduce the risk of heart disease and promote overall cardiovascular well-being.",
+  "Immunity Boost": "A strong immune system is essential for protecting the body against infections and diseases. Boosting immunity naturally begins with consuming a balanced diet rich in vitamins and minerals, including fruits, vegetables, nuts, seeds, and whole grains that provide essential nutrients like vitamin C, vitamin D, and zinc. Staying hydrated and maintaining proper digestion also contribute to better immune function. Quality sleep is equally important, as the body repairs and strengthens its defense system during rest. Regular physical activity helps improve circulation and supports immune responses, while managing stress through mindfulness, meditation, or relaxation techniques prevents the weakening of immunity. Avoiding harmful habits such as smoking and excessive junk food consumption further protects the body. By maintaining these healthy lifestyle practices consistently, individuals can enhance their immunity and improve overall well-being.",
+  "Diabetes Care": "Managing diabetes effectively requires a combination of awareness, discipline, and healthy lifestyle choices. Understanding how to control blood sugar levels is key, which involves following a balanced diet that includes fiber-rich foods, whole grains, lean proteins, and controlled carbohydrate intake while avoiding excessive sugar and processed foods. Regular monitoring of blood glucose levels helps in tracking progress and making necessary adjustments. Physical activity plays a significant role in improving insulin sensitivity and maintaining a healthy weight. Staying consistent with prescribed medications or insulin therapy, as advised by healthcare professionals, is crucial for long-term management. Preventing complications also involves routine checkups, proper foot care, and maintaining heart health. With the right habits and knowledge, individuals can live a healthy and active life while managing diabetes effectively.",
+  "Respiratory Health": "Maintaining healthy lungs is vital for efficient breathing and overall body function. Respiratory health can be improved through regular breathing exercises such as deep breathing, pranayama, and aerobic activities that enhance lung capacity and oxygen intake. Avoiding exposure to harmful pollutants, smoke, and allergens is essential to protect the respiratory system from damage. Keeping indoor environments clean and well-ventilated further supports lung health. Staying physically active and maintaining good posture also aid in proper breathing. Adequate hydration helps keep airways clear, while a nutritious diet supports overall respiratory function. Being mindful of early symptoms like persistent cough or shortness of breath and seeking timely medical advice ensures better prevention and care of respiratory issues.",
+  "Women's Health": "Women's health encompasses a wide range of physical, mental, and hormonal aspects that require special attention at different stages of life. Proper nutrition plays a key role, including adequate intake of iron, calcium, vitamins, and other essential nutrients to support overall well-being. Hormonal balance is important for maintaining reproductive health, mood stability, and energy levels, which can be managed through a healthy lifestyle, stress management, and regular exercise. Preventive care such as routine health checkups, screenings, and vaccinations helps in early detection of potential health concerns. Awareness about menstrual health, pregnancy care, and menopause is also crucial for long-term wellness. Prioritizing self-care, mental health, and work-life balance further empowers women to lead healthy and fulfilling lives."
+};
+
+// CARD CLICK → OPEN MODAL
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("click", () => {
+    const title = card.querySelector("h3").innerText;
+
+    modalTitle.innerText = title;
+    modalText.innerText = topicData[title];
+
+    modal.style.display = "block";
+  });
+});
+
+// CLOSE BUTTON
+function closeModal() {
+  modal.style.display = "none";
+}
+
+// CLOSE WHEN CLICK OUTSIDE
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    closeModal();
+  }
+});
+</script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

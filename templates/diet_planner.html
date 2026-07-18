@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Diet & Workout Planner</title>
+        <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --primary: #6d5dfc;
+            --secondary: #00d4ff;
+            --accent: #22c55e;
+            --dark: #07111f;
+            --text: #162033;
+            --muted: #64748b;
+            --card: rgba(255, 255, 255, 0.78);
+            --border: rgba(255, 255, 255, 0.55);
+            --shadow: 0 25px 80px rgba(20, 28, 55, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Inter", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 12% 12%, rgba(109, 93, 252, 0.26), transparent 32%),
+                radial-gradient(circle at 90% 10%, rgba(0, 212, 255, 0.25), transparent 30%),
+                radial-gradient(circle at 80% 88%, rgba(34, 197, 94, 0.18), transparent 31%),
+                linear-gradient(135deg, #f4f8ff 0%, #edf4ff 48%, #f7fbff 100%);
+            overflow-x: hidden;
+            min-height:100vh;
+            margin:0;
+            padding:0;
+            }
+            .page-shell{
+            width:min(1180px,100%);
+            margin:28px auto;
+            padding:0 28px;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            filter: blur(12px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: -1;
+            animation: floatBlob 8s ease-in-out infinite alternate;
+        }
+
+        body::before {
+            left: -90px;
+            top: 210px;
+            background: var(--primary);
+        }
+
+        body::after {
+            right: -80px;
+            bottom: 110px;
+            background: var(--secondary);
+            animation-delay: 1.5s;
+        }
+
+        
+        @keyframes floatBlob {
+            from { transform: translateY(0) scale(1); }
+            to { transform: translateY(-35px) scale(1.08); }
+        }
+
+        .page-shell {
+            width: min(1180px, 100%);
+            margin: 0 auto;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            align-items: stretch;
+            margin-bottom: 28px;
+            animation: fadeUp 0.75s ease both;
+        }
+
+        .hero-card,
+        .form-card,
+        .result-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow);
+            border-radius: 34px;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(26px, 5vw, 56px);
+            min-height: 420px;
+        }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(255,255,255,0.95), rgba(255,255,255,0.42)),
+                url("{{ url_for('static', filename='images/diet.png') }}");
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 310px;
+            height: 310px;
+            right: -90px;
+            top: -75px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(109,93,252,.36), rgba(0,212,255,.25));
+            z-index: -1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 15px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #344155;
+            font-weight: 800;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,.7);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        h1 {
+            max-width: 680px;
+            margin: 24px 0 16px;
+            font-size: clamp(38px, 6vw, 72px);
+            line-height: 0.95;
+            letter-spacing: -2.6px;
+            font-weight: 900;
+            color: #0f172a;
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text {
+            max-width: 560px;
+            color: #405169;
+            font-size: 17px;
+            line-height: 1.75;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .stat {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.68);
+            border: 1px solid rgba(255,255,255,.8);
+            transition: 0.35s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-8px) rotate(-1deg);
+            box-shadow: 0 18px 35px rgba(109, 93, 252, 0.16);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .stat small {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .side-panel {
+            display: grid;
+            gap: 18px;
+        }
+
+        .mini-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 130px;
+            padding: 24px;
+            border-radius: 30px;
+            color: white;
+            background: linear-gradient(135deg, #111827, #2f2a75 52%, #0891b2);
+            box-shadow: 0 25px 65px rgba(47, 42, 117, .28);
+            transition: .38s ease;
+        }
+
+        .mini-card:hover {
+            transform: translateY(-8px) scale(1.015);
+        }
+
+        .mini-card:nth-child(2) {
+            background: linear-gradient(135deg, #0f766e, #16a34a);
+        }
+
+        .mini-card h3 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .mini-card p {
+            color: rgba(255,255,255,.82);
+            line-height: 1.55;
+            font-size: 14px;
+        }
+
+        .mini-icon {
+            position: absolute;
+            right: 22px;
+            bottom: 14px;
+            font-size: 58px;
+            opacity: .24;
+            transform: rotate(-10deg);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 28px;
+            align-items: stretch;
+            animation: fadeUp 0.75s 0.12s ease both;
+        }
+
+        .form-intro {
+            padding: 34px;
+            border-radius: 34px;
+            background: linear-gradient(145deg, rgba(109,93,252,.95), rgba(0,212,255,.82));
+            color: white;
+            box-shadow: 0 30px 70px rgba(79, 70, 229, 0.26);
+        }
+
+        .form-intro h2 {
+            font-size: clamp(28px, 4vw, 44px);
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+            line-height: 1.05;
+        }
+
+        .form-intro p {
+            color: rgba(255,255,255,.84);
+            line-height: 1.75;
+            font-weight: 500;
+        }
+
+        .tips {
+            display: grid;
+            gap: 14px;
+            margin-top: 26px;
+        }
+
+        .tip {
+            padding: 15px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.22);
+            transition: .32s ease;
+        }
+
+        .tip:hover {
+            background: rgba(255,255,255,.25);
+            transform: translateX(8px);
+        }
+
+        .form-card {
+            padding: clamp(22px, 4vw, 36px);
+            transition: .35s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 35px 90px rgba(109, 93, 252, 0.18);
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .field {
+            position: relative;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 9px;
+            font-weight: 800;
+            color: #1f2a44;
+            font-size: 14px;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            border: 2px solid rgba(148, 163, 184, 0.22);
+            background: rgba(255, 255, 255, 0.86);
+            color: #111827;
+            border-radius: 18px;
+            padding: 15px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: .32s ease;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.045);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%);
+            background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        select:hover,
+        textarea:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 212, 255, .72);
+            box-shadow: 0 16px 38px rgba(0, 212, 255, .12);
+        }
+
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(109, 93, 252, .12), 0 18px 38px rgba(109, 93, 252, .14);
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        button {
+            grid-column: 1 / -1;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            border: none;
+            border-radius: 999px;
+            padding: 17px 22px;
+            color: white;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6, var(--secondary));
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: .4px;
+            cursor: pointer;
+            box-shadow: 0 18px 42px rgba(79, 70, 229, .33);
+            transition: .35s ease;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 -120%;
+            width: 80%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,.62), transparent);
+            transform: skewX(-18deg);
+            transition: .7s ease;
+        }
+
+        button:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 28px 60px rgba(79, 70, 229, .44);
+        }
+
+        button:hover::before {
+            left: 130%;
+        }
+
+        button:active {
+            transform: translateY(-2px) scale(.99);
+        }
+
+        .loading button {
+            pointer-events: none;
+            opacity: .9;
+        }
+
+        .result-box {
+            max-width: 1180px;
+            margin: 28px auto 0;
+            padding: clamp(24px, 4vw, 38px);
+            animation: fadeUp 0.65s ease both;
+        }
+
+        .result-box h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-size: clamp(24px, 4vw, 34px);
+            color: #0f172a;
+        }
+
+        .result-box pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "Inter", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #263244;
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(148, 163, 184, .22);
+            padding: 22px;
+            border-radius: 22px;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(34px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 950px) {
+            body { padding: 18px; }
+            .hero,
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card {
+                min-height: 360px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+
+            .hero-card,
+            .form-intro,
+            .form-card,
+            .result-box {
+                border-radius: 24px;
+            }
+
+            .hero-card,
+            .form-intro,
+            .form-card {
+                padding: 22px;
+            }
+
+            h1 {
+                letter-spacing: -1.4px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .mini-card {
+                min-height: 112px;
+            }
+
+            select,
+            textarea,
+            button {
+                font-size: 14px;
+            }
+        }
+        .card-link{
+    display:block;
+    height:100%;
+    }
+
+    .card-link .mini-card{
+        height:100%;
+    }
+
+
+        /* ================= NAVBAR FIX ================= */
+
+        header{
+            width:100%;
+            height:85px;
+            background:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 40px;
+            box-shadow:0 2px 12px rgba(0,0,0,.08);
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-shrink:0;
+        }
+
+        .logo img{
+            width:65px;
+            height:auto;
+            display:block;
+        }
+
+        .logo-text h2{
+            margin:0;
+            font-size:2rem;
+            color:#1b2d5c;
+            line-height:1;
+        }
+
+        .logo-text span{
+            font-size:.9rem;
+            color:#7b8498;
+        }
+
+        .nav-links{
+            display:flex;
+            align-items:center;
+            gap:28px;
+            margin-left:auto;
+            background:#fff !important;
+            box-shadow:none !important;
+        }
+
+        .nav-links a{
+            text-decoration:none;
+            color:#24345e !important;
+            font-weight:600;
+            white-space:nowrap;
+        }
+
+        .user-dropdown{
+            margin-left:10px;
+        }
+
+        .user-btn{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            background:#25d0d8;
+            color:#fff !important;
+            border:none;
+            border-radius:30px;
+            padding:12px 20px;
+            cursor:pointer;
+        }
+
+        .user-btn i{
+            color:#fff;
+        }
+
+        .login-btn{
+            background:#25d0d8;
+            color:#fff !important;
+            border:none;
+            border-radius:30px;
+            padding:12px 22px;
+        }
+
+        #menuBtn{
+            display:none;
+        }
+
+        .page-shell{
+            margin-top:35px;
+        }
+        /* ================= LOADER ================= */
+
+        #loaderOverlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,.10);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+
+        #loaderOverlay.show{
+            display:flex;
+        }
+
+        .loader-box{
+            text-align:center;
+        }
+
+        .loader{
+            width:80px;
+            height:80px;
+            border:8px solid #e6e6e6;
+            border-top:8px solid #6d5dfc;
+            border-right:8px solid #00d4ff;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
+            margin:auto;
+        }
+
+        .loader-box h3{
+            margin-top:25px;
+            font-size:24px;
+            color:#162033;
+        }
+
+        .loader-box p{
+            margin-top:10px;
+            color:#64748b;
+            font-size:15px;
+        }
+
+        @keyframes spin{
+            from{
+                transform:rotate(0deg);
+            }
+            to{
+                transform:rotate(360deg);
+            }
+        }
+        .card-link{
+            display:block;
+            text-decoration:none;
+        }
+        .side-panel{
+            display:grid;
+            gap:18px;
+            height:100%;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .mini-card{
+            flex:1;
+        }
+        .mini-card{
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+    <div class="logo">
+        <a href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindMate">
+        </a>
+
+        <div class="logo-text">
+            <h2>MindMate</h2>
+            <span>Care. Support. Empower.</span>
+        </div>
+    </div>
+
+    <button id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="nav-links" id="navLinks">
+        <a href="{{ url_for('home') }}" class="active">Home</a>
+        <a href="#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}">Track Appointment</a>
+        {% endif %}
+
+        <a href="#first-aid">First Aid</a>
+        <a href="#awareness">Awareness</a>
+        <a href="#contact">Contact Us</a>
+
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+            <button class="user-btn" onclick="toggleDropdown()">
+                <i class="fa-solid fa-user"></i>
+                {{ session.get('user_name') }}
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="dropdown-content" id="userDropdown">
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+            <i class="fa-solid fa-user"></i>
+            Login / Sign Up
+        </a>
+        {% endif %}
+    </nav>
+</header>
+    <main class="page-shell">
+        <section class="hero">
+            <div class="hero-card">
+                <div class="badge">AI Powered Health Planner</div>
+                <h1>Build your <span>perfect diet</span> and workout plan.</h1>
+                <p class="hero-text">
+                    Select your lifestyle, goal, diet preference and health condition. Your AI planner will create a clean diet, workout, hydration and wellness guide for you.
+                </p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <strong>5+</strong>
+                        <small>Diet ideas</small>
+                    </div>
+                    <div class="stat">
+                        <strong>5+</strong>
+                        <small>Workout tips</small>
+                    </div>
+                    <div class="stat">
+                        <strong>AI</strong>
+                        <small>Personalized</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+
+                <a href="{{ url_for('fitness_focus') }}" class="card-link">
+                    <div class="mini-card">
+                        <h3>Fitness Focus</h3>
+                        <p>Simple workout ideas based on weight loss, weight gain or muscle gain goals.</p>
+                    </div>
+                </a>
+
+                
+                <a href="{{ url_for('smart_nutrition') }}" class="card-link">
+                <div class="mini-card">
+                    <h3>Smart Nutrition</h3>
+                    <p>Breakfast, dinner, snacks, supplements and water intake suggestions.</p>
+                </div></a>
+                
+
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="form-intro">
+                <h2>Tell us about your goal</h2>
+                <p>Fill the planner form and generate your personalized AI recommendation in seconds.</p>
+
+                <div class="tips">
+                    <div class="tip">Ai Powred Diet Plan</div>
+                    <div class="tip">Eat Healthy, Live Long</div>
+                    <div class="tip">Be Fit and Fine</div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <form action="/recommendation" method="post" id="plannerForm">
+                    <div class="field">
+                        <label for="diet">Dietary Preferences</label>
+                        <select id="diet" name="dietray_preferences" required>
+                            <option value="" selected disabled>Select your diet</option>
+                            <option value="Vegetarian">Vegetarian</option>
+                            <option value="Non-Vegetarian">Non-Vegetarian</option>
+                            <option value="Vegan">Vegan</option>
+                            <option value="High Protein">High Protein</option>
+                            <option value="Keto">Keto</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="goal">Fitness Goals</label>
+                        <select id="goal" name="fitness_goals" required>
+                            <option value="" selected disabled>Select your goal</option>
+                            <option value="Weight Loss">Weight Loss</option>
+                            <option value="Weight Gain">Weight Gain</option>
+                            <option value="Muscle Gain">Muscle Gain</option>
+                            <option value="Maintain Weight">Maintain Weight</option>
+                            <option value="Fat Loss">Fat Loss</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="lifestyle">Lifestyle Factor</label>
+                        <select id="lifestyle" name="lifestyle_factors" required>
+                            <option value="" selected disabled>Select your lifestyle</option>
+                            <option value="Sedentary">Sedentary</option>
+                            <option value="Lightly Active">Lightly Active</option>
+                            <option value="Moderately Active">Moderately Active</option>
+                            <option value="Very Active">Very Active</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="restriction">Dietary Restriction</label>
+                        <select id="restriction" name="Dietray_restriction" required>
+                            <option value="" selected disabled>Select restriction</option>
+                            <option value="None">None</option>
+                            <option value="Gluten Free">Gluten Free</option>
+                            <option value="Lactose Intolerance">Lactose Intolerance</option>
+                            <option value="Nut Allergy">Nut Allergy</option>
+                            <option value="Egg Allergy">Egg Allergy</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label for="condition">Health Conditions</label>
+                        <select id="condition" name="health_conditions">
+                            <option value="None" selected>None</option>
+                            <option value="Diabetes">Diabetes</option>
+                            <option value="High Blood Pressure">High Blood Pressure</option>
+                            <option value="Heart Disease">Heart Disease</option>
+                            <option value="Thyroid">Thyroid</option>
+                            <option value="Obesity">Obesity</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label for="query">Query</label>
+                        <textarea id="query" name="user_query" placeholder="Example: I want to gain weight with low-budget food and home workout..." required></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn">Get My AI Recommendation</button>
+                </form>
+            </div>
+        </section>
+
+        {% if recommendations %}
+        <section class="result-box">
+            <h3>Your Personalized Recommendation</h3>
+            <pre id="result">{{ recommendations }}</pre>
+        </section>
+        {% endif %}
+    </main>
+    <!-- Loading Overlay -->
+    <div id="loaderOverlay">
+        <div class="loader-box">
+            <div class="loader"></div>
+            <h3>Generating Your AI Recommendation...</h3>
+            <p>Please wait while our AI prepares your personalized diet and workout plan.</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const result = document.getElementById("result");
+            const form = document.getElementById("plannerForm");
+            const btn = document.getElementById("submitBtn");
+
+            if (result) {
+                result.textContent = result.textContent
+                    .replace(/\*/g, "")
+                    .replace(/#/g, "");
+            }
+
+            if (form && btn) {
+                form.addEventListener("submit", function () {
+                    form.classList.add("loading");
+                    btn.textContent = "⏳ Generating your plan...";
+                });
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const result = document.getElementById("result");
+            const form = document.getElementById("plannerForm");
+            const btn = document.getElementById("submitBtn");
+            const loader = document.getElementById("loaderOverlay");
+
+            if (result) {
+                result.textContent = result.textContent
+                    .replace(/\*/g, "")
+                    .replace(/#/g, "");
+            }
+
+            if (form && btn) {
+                form.addEventListener("submit", function () {
+
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+
+                    loader.classList.add("show");
+                });
+            }
+
+        });
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

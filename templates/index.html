@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindMate | Care. Support. Empower.</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+  </head>
+  <body>
+    <div id="loader">
+      <div class="pulse"></div>
+      <p>Loading MindMate...</p>
+    </div>
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{ url_for('first_aid') }}">First Aid</a>
+        <a href="{{ url_for('health_awareness') }}">Awareness</a>
+        <a href="#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+    <div class="ticker">
+      <div class="ticker-text">
+        <i class="fa-solid fa-calendar-days"></i> Book Appointments Online | <i class="fa-solid fa-kit-medical"></i> First Aid Guide Available | <i class="fa-solid fa-circle-info"></i> Keep aware with Awareness Guide |
+        <i class="fa-solid fa-heart-circle-plus"></i> Stay Healthy with MindMate | <i class="fa-solid fa-robot"></i> AI Health Assistant | <i class="fa-solid fa-virus-covid"></i> Find out your diesease | <i class="fa-solid fa-headset"></i> Customer Support within 24 hours | <i class="fa-solid fa-phone"></i> +91 87100 42392 | <i class="fa-solid fa-envelope"></i> adey011003@gmail.com
+      </div>
+    </div>
+
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="hero-content">
+          <h1>Better Health,<br />Better <span>Tomorrow.</span></h1>
+          <p>
+            MindMate is your trusted companion for better health and well-being.
+            Access expert care, first aid guidance and awareness anytime.
+          </p>
+          <div class="hero-buttons">
+            <a href="{{ url_for('appointment') }}" class="btn btn-primary"
+              ><i class="fa-regular fa-calendar-check"></i> Book Appointment</a
+            >
+            <a href="{{ url_for('first_aid') }}" class="btn btn-light"
+              ><i class="fa-solid fa-briefcase-medical"></i> First Aid</a
+            >
+          </div>
+        </div>
+
+        <div class="hero-img-box">
+          <div class="circle-bg"></div>
+          <div class="float-icon one">
+            <i class="fa-solid fa-heart-pulse"></i>
+          </div>
+          <div class="float-icon two">
+            <i class="fa-solid fa-shield-heart"></i>
+          </div>
+          <div class="float-icon three">
+            <i class="fa-solid fa-user-doctor"></i>
+          </div>
+          <img
+            class="hero-doctor-img"
+            src="{{ url_for('static', filename='images/hero.png') }}"
+            alt="doctor consultation"
+          />
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <section class="container" id="services">
+        <div class="section-title">
+          <h2>Our Services</h2>
+          <span class="pulse-line"
+            ><i class="fa-solid fa-heart-pulse"></i
+          ></span>
+        </div>
+
+        <div class="services-grid">
+          <a href="{{ url_for('disease') }}">
+          <div class="service-card">
+            <div class="service-icon teal">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </div>
+            <h3>Know Your Disease</h3>
+            <p>
+              Find out your disease and stay protected and healthy
+            </p>
+            <div class="mini-line teal-line"></div>
+          </div></a>
+
+          <a href = "{{url_for('appointment')}}">
+          <div class="service-card">
+            <div class="service-icon purple">
+              <i class="fa-regular fa-calendar-days"></i>
+            </div>
+            <h3>Appointment Booking</h3>
+            <p>Book appointments with trusted doctors quickly and easily.</p>
+            <div class="mini-line purple-line"></div>
+          </div></a>
+
+          
+          <a href="{{url_for('chat_page')}}">
+          <div class="service-card">
+            <div class="service-icon teal">
+              <i class="fa-solid fa-comment-medical"></i>
+            </div>
+            <h3>Personalized AI Health Assistant</h3>
+            <p>
+              Your personalized AI Health assisteant Guide.
+            </p>
+            <div class="mini-line teal-line"></div>
+            </div>
+            
+
+          <a href = "{{url_for('diet_planner')}}">
+          <div class="service-card">
+            <div class="service-icon pink">
+              <i class="fa-solid fa-heart-circle-plus"></i>
+            </div>
+            <h3>Diet Planner</h3>
+            <p>Take your diet planning, maintain your helth and stay safe and healthy.</p>
+            <div class="mini-line pink-line"></div>
+          </div></a>
+
+          
+        <a href="{{ url_for('health_awareness') }}">
+          <div class="service-card">
+            <div class="service-icon blue">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3>Health Awareness</h3>
+            <p>
+              Stay informed with health tips, campaigns and awareness programs.
+            </p>
+            <div class="mini-line blue-line"></div>
+          </div></a>
+
+          <a href = "#contact">
+          <div class="service-card">
+            <div class="service-icon orange">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <h3>Customer Support</h3>
+            <p>Get instant help and support during medical emergencies.
+               24 * 7 Availability</p>
+            <div class="mini-line orange-line"></div>
+          </div></a>
+        </div>
+      </section>
+
+      <section class="container feature-row">
+        <div class="feature-card appointment" id="appointment">
+          <div class="feature-text">
+            <h2>Doctor’s<br />Appointment</h2>
+            <p>
+              Book an appointment with qualified doctors and get expert
+              consultation for your health concerns.
+            </p>
+            <ul class="check-list">
+              <li>
+                <i class="fa-solid fa-circle-check"></i> Easy and quick booking
+              </li>
+              <li>
+                <i class="fa-solid fa-circle-check"></i> Choose your preferred
+                doctor
+              </li>
+              <li>
+                <i class="fa-solid fa-circle-check"></i> Clinic & online
+                consultation available
+              </li>
+            </ul>
+            <a href="{{ url_for('appointment') }}" class="appointment-btn">
+              Book Appointment
+              <i class="fa-solid fa-circle-arrow-right"></i>
+            </a>
+          </div>
+          <img
+            class="feature-img"
+            src="{{ url_for('static', filename='images/doctor_appointment.jpg') }}"
+            alt="appointment app"
+          />
+        </div>
+
+        <div class="feature-card firstaid" id="first-aid">
+          <div class="feature-text">
+            <h2>First Aid<br />Guide</h2>
+            <p>
+              Be prepared for emergencies. Learn simple and effective first aid
+              techniques to save lives.
+            </p>
+            <ul class="check-list">
+              <li>
+                <i class="fa-solid fa-circle-check"></i> Step-by-step guides
+              </li>
+              <li>
+                <i class="fa-solid fa-circle-check"></i> For common injuries &
+                emergencies
+              </li>
+              <li>
+                <i class="fa-solid fa-circle-check"></i> Easy to understand for
+                everyone
+              </li>
+            </ul>
+            <a href="{{ url_for('first_aid') }}" class="firstaid-btn"
+              >Explore First Aid <i class="fa-solid fa-circle-arrow-right"></i
+            ></a>
+          </div>
+          <img
+            class="feature-img"
+            src="{{ url_for('static', filename='images/first_aid.jpg') }}"
+            alt="first aid kit"
+          />
+        </div>
+      </section>
+
+      <section class="container awareness" id="awareness">
+        <div class="feature-text">
+          <h2>Health<br />Awareness</h2>
+          <p>
+            Knowledge is the first step to good health. Stay updated with the
+            latest health tips and awareness programs.
+          </p>
+          <ul class="check-list">
+            <li>
+              <i class="fa-solid fa-circle-check"></i> Health tips & articles
+            </li>
+            <li>
+              <i class="fa-solid fa-circle-check"></i> Awareness campaigns
+            </li>
+            <li>
+              <i class="fa-solid fa-circle-check"></i> Healthy lifestyle
+              guidance
+            </li>
+          </ul>
+          <a
+            href="{{ url_for('health_awareness') }}"
+            class="btn"
+            style="
+              background: #8064dd;
+              color: white;
+              width: fit-content;
+              margin-top: 18px;
+              padding: 14px 20px;
+              font-size: 13px;
+            "
+            >Explore Awareness <i class="fa-solid fa-circle-arrow-right"></i
+          ></a>
+        </div>
+
+        <div class="wellness-area">
+          <div class="orbit"></div>
+          <div class="habit h1">
+            <i class="fa-solid fa-apple-whole"></i>Eat Healthy
+          </div>
+          <div class="habit h2">
+            <i class="fa-solid fa-person-running"></i>Stay Active
+          </div>
+          <div class="habit h3">
+            <i class="fa-solid fa-heart-circle-check"></i>Regular Checkups
+          </div>
+          <div class="habit h4">
+            <i class="fa-solid fa-brain"></i>Mental Wellbeing
+          </div>
+          <div class="habit h5"><i class="fa-solid fa-moon"></i>Sleep Well</div>
+          <img
+            class="person-img"
+            src="{{ url_for('static', filename='images/health_awareness.png') }}"
+            alt="wellness meditation"
+          />
+        </div>
+      </section>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <section class="container contact" id="contact">
+        <div class="contact-info">
+          <small>WE'RE HERE TO HELP</small>
+          <h2>Contact Us</h2>
+          <p>Have a question or need help? Reach out to us.</p>
+          <br>
+          <p>For any Inquiries, you can also contact with us directly at -</p>
+          <p style = "color: #0077CC; cursor: default;"><i class="fa-solid fa-envelope"></i> adey011003@gmail.com</p>
+          <p style = "color: #0077CC; cursor: default;"><i class="fa-solid fa-phone"></i> +91 8710042392</p>
+          <img
+            class="mail-art"
+            src="{{ url_for('static', filename='images/mail.png') }}"
+            alt="contact mail"
+          />
+        </div>
+
+        <form
+            class="contact-form"
+            id="contactForm"
+            method="POST"
+            action="/contact"
+        >
+          <div class="input-group">
+            <i class="fa-solid fa-user"></i>
+            <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                required
+            />
+          </div>
+          <div class="input-group">
+            <i class="fa-solid fa-envelope"></i>
+            <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                required
+            />
+          </div>
+          <div class="input-group full">
+            <i class="fa-solid fa-phone"></i>
+            <input
+                type="tel"
+                name="mobile"
+                placeholder="Mobile"
+                required
+            />
+          </div>
+          <div class="input-group full">
+            <i class="fa-solid fa-comment-dots"></i>
+            <textarea
+                name="message"
+                placeholder="Message"
+                required
+            ></textarea>
+          </div>
+          <button class="btn btn-primary send-btn" type="submit">
+            Send Message <i class="fa-regular fa-paper-plane"></i>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="logo-box" style="margin-bottom: 20px">
+              <div class="logo-icon"><img
+            src="{{ url_for('static', filename='images/favicon.png') }}"
+            alt="MindMate Logo"
+          /></div>
+              <div class="logo-text">
+                <h2 style="color: #fff">MindMate</h2>
+                <span style="color: #cfd8f6">Care. Support. Empower.</span>
+              </div>
+            </div>
+            <p>
+              Your trusted healthcare companion. We care for you and your loved
+              ones.
+            </p>
+            <div class="socials">
+              <a href="https://www.facebook.com/profile.php?id=100072843489055" target = "_main"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="https://x.com/Arpan_Dey_0348" target = "_main"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="https://www.instagram.com/dey_arpan_03/" target = "_main"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/arpan-dey-25748526a/" target = "_main"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://portfolio-arpan-snowy.vercel.app/" target = "_main"><i class="fa-solid fa-globe"></i></a>
+            </div>
+          </div>
+
+          <div>
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{url_for('home')}}">Home</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="{{url_for('appointment')}}">Doctor's Appointment</a></li>
+              <li><a href="{{url_for('first_aid')}}">First Aid</a></li>
+              <li><a href="{{url_for('health_awareness')}}">Health Awareness</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Services</h3>
+            <ul>
+              <li><a href="{{ url_for('disease') }}">Know Your Disease</a></li>
+              <li><a href="{{url_for('appointment')}}">Doctor's Appointment</a></li>
+              <li><a href="{{url_for('first_aid')}}">First Aid Guide</a></li>
+              <li><a href="{{url_for('diet_planner')}}">Diet Planner</a></li>
+              <li><a href="{{url_for('health_awareness')}}">Health Awareness</a></li>
+              <li><a href="#contact">Emergency Support</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Contact Info</h3>
+            <div class="contact-line">
+              <i class="fa-solid fa-location-dot"></i
+              ><span>123 Health Street<br />Hooghly, 712148</span>
+            </div>
+            <div class="contact-line">
+              <i class="fa-solid fa-phone"></i><span>+91 8710042392</span>
+            </div>
+            <div class="contact-line">
+              <i class="fa-solid fa-envelope"></i
+              ><span>adey011003@gmail.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>© 2026 MindMate. Educational purpose only.</span>
+          <!-- <span>Privacy Policy &nbsp; | &nbsp; Terms & Conditions</span> -->
+        </div>
+      </div>
+    </footer>
+    <!-- ================= ON SCREEN CHATBOT ASSISTANT ================= -->
+    <div class="chatbot-widget" id="chatbotWidget">
+      <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open MindMate assistant">
+        <i class="fa-solid fa-robot"></i>
+        <span class="chat-alert"></span>
+      </button>
+
+      <div class="chatbot-box" id="chatbotBox">
+        <div class="chatbot-header">
+          <div class="bot-avatar"><i class="fa-solid fa-user-nurse"></i></div>
+          <div>
+            <h3>MindMate Assistant</h3>
+            <p>Ask me how to use this website</p>
+          </div>
+          <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="chatbot-messages" id="chatbotMessages">
+          <div class="bot-message message">
+            Hi 👋 I can guide you. Choose a help topic below or type your question.
+          </div>
+        </div>
+
+        <div class="chatbot-quick-actions">
+          <button data-question="How to book appointment?">Book appointment</button>
+          <button data-question="How to open AI diet planner?">AI diet planner</button>
+          <button data-question="How to know disease using AI ML?">Know disease AI/ML</button>
+          <button data-question="How to use first aid guide?">First aid</button>
+          <button data-question="How to contact support?">Contact support</button>
+        </div>
+
+        <form class="chatbot-input-area" id="chatbotForm">
+          <input
+            type="text"
+            id="chatbotInput"
+            placeholder="Type here..."
+            autocomplete="off"
+          />
+          <button type="submit" aria-label="Send message">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    <script>
+      const appointmentURL = "{{ url_for('appointment') }}";
+      const diet_plannerURL = "{{ url_for('diet_planner') }}";
+      const frist_aidURL = "{{ url_for('first_aid') }}";
+      const health_awarenessURL = "{{ url_for('health_awareness') }}";
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

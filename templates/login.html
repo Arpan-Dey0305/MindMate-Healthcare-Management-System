@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindMate Login</title>
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+      style="border-radius: 100%"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+  </head>
+
+  <body>
+    <main>
+      <header class="navbar">
+        <a href="{{url_for('home')}}" class="logo-box"
+          ><div class="logo-icon">
+            <img
+              src="{{ url_for('static', filename='images/logo.png') }}"
+              alt="MindMate Logo"
+            />
+          </div>
+          <div class="logo-text">
+            <h2>MindMate</h2>
+            <span>Care. Support. Empower.</span>
+          </div></a
+        >
+        <nav class="nav-links" id="navLinks">
+          <a href="{{url_for('home')}}" class="active">Home</a>
+          <a href="#services">Services</a>
+          <a href="{{url_for('appointment')}}">Doctor's Appointment</a>
+          <a href="#first-aid">First Aid</a><a href="#awareness">Awareness</a>
+          <a href="#contact">Contact Us</a>
+          <a href="{{ url_for('login') }}" class="login-btn"
+            ><i class="fa-solid fa-user"></i> Login /SignUp</a
+          >
+        </nav>
+        <div class="menu-btn" id="menuBtn">
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      </header>
+      <div class="login-container">
+        <div class="logo">
+          <i class="fa-solid fa-hand-holding-medical"></i>
+          <h1>WELCOME BACK!</h1>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchToUserLogin()">
+            User Login
+          </button>
+
+          <button class="tab-btn" onclick="switchToAdminLogin()">
+            Admin Login
+          </button>
+        </div>
+
+        <form id="loginForm" action="{{ url_for('user_login') }}" method="POST">
+          <div class="input-group" id="nameGroup" style="display: none">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" name="name" placeholder="Full Name" />
+          </div>
+
+          <div class="input-group" id="mobileGroup" style="display: none">
+            <i class="fa-solid fa-phone input-icon"></i>
+            <input type="text" name="mobile" placeholder="Mobile Number" />
+          </div>
+
+          <div class="input-group">
+            <i class="fa-solid fa-envelope input-icon"></i>
+            <input
+              type="email"
+              name="email"
+              id="username"
+              placeholder="Email"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <i class="fa-solid fa-lock input-icon"></i>
+
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+
+            <i
+              class="fa-regular fa-eye eye-icon"
+              onclick="togglePassword()"
+            ></i>
+          </div>
+
+          <div class="options">
+            <label>
+              <input type="checkbox" />
+              Remember me
+            </label>
+
+            <a href="#">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="form-login-btn" id="submitBtn">
+            Log In
+          </button>
+        </form>
+
+        <div class="divider">
+          <hr />
+          <span>or</span>
+          <hr />
+        </div>
+
+        <div class="register">
+          <span id="registerText">Don't have an account?</span>
+          <a href="#" onclick="showRegister()">Register Now</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+  </body>
+</html>

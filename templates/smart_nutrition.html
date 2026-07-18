@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindMate | Smart Nutrition</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+
+<style>
+:root{
+  --bg:#050b09;
+  --card:#0e1a16;
+  --glass:rgba(255,255,255,0.05);
+  --text:#ecfff7;
+  --muted:#94a9a0;
+  --green:#b8ff3d;
+  --blue:#4fc3ff;
+  --radius:18px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Manrope,sans-serif;
+  background:linear-gradient(180deg,#050b09,#0a1612);
+  color:var(--text);
+}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(1100px,95%);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 20px;
+  border-radius:14px;
+  background:var(--glass);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.brand{
+  font-weight:800;
+  font-size:20px;
+}
+.brand span{color:var(--green)}
+
+nav a{
+  margin:0 10px;
+  color:var(--muted);
+  font-size:14px;
+  transition:.3s;
+}
+nav a:hover{color:white}
+.btn-nav{
+  background:var(--green);
+  padding:12px 22px;
+  border-radius:12px;
+  font-weight:700;
+  display:inline-block;
+  color:#102000;
+}
+
+/* HERO */
+.hero{
+  padding:140px 20px 80px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:clamp(38px,6vw,70px);
+  line-height:1.1;
+}
+
+.hero span{
+  color:var(--green);
+}
+
+.hero p{
+  color:var(--muted);
+  margin:20px auto;
+  max-width:600px;
+}
+
+.btn{
+  background:var(--green);
+  padding:12px 22px;
+  border-radius:12px;
+  font-weight:700;
+  display:inline-block;
+  margin-top:15px;
+  color:#102000;
+}
+
+/* CARDS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+  padding:40px 20px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:24px;
+  border:1px solid rgba(255,255,255,.08);
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  border-color:var(--green);
+}
+
+.card i{
+  font-size:24px;
+  color:var(--green);
+  margin-bottom:12px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.card p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* CALCULATOR */
+.calc{
+  max-width:900px;
+  margin:60px auto;
+  padding:30px;
+  background:var(--card);
+  border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.calc h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+input,select{
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#08130f;
+  color:white;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+button{
+  background:var(--green);
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* RESULT */
+.result{
+  margin-top:20px;
+  text-align:center;
+  padding:15px;
+  background:rgba(184,255,61,.08);
+  border-radius:12px;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:40px;
+  color:var(--muted);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  font-size:20px;
+}
+
+.brand-icon{
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.brand-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:8px;
+  background:#fff;
+}
+
+nav{
+  display:flex;
+  align-items:center;
+}
+a{
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+  
+  <!-- LEFT: Logo -->
+  <a class="brand" href="{{url_for('home')}}" style = "text-decoration: none;">
+    <span class="brand-icon">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindMate Logo">
+    </span>
+    <span>Mind<span>Mate</span></span>
+  </a>
+
+  <!-- RIGHT: Navigation -->
+  <nav>
+    <a href="{{url_for('home')}}">Home</a>
+      <a href="{{url_for('diet_planner')}}">Diet Planner</a>
+    <a href="#calc">Calorie Calculator</a>
+  </nav>
+<a class="btn-nav" href="#goals">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+</header>
+
+<section class="hero">
+  <h1>Smart Nutrition <br><span>Made Simple</span></h1>
+  <p>Personalized diet plans, calorie tracking, and smarter eating habits for a healthier you.</p>
+  <a href="#calc" class="btn">Get Started</a>
+</section>
+
+<section class="grid">
+  <div class="card">
+    <i class="fa-solid fa-apple-whole"></i>
+    <h3>Balanced Diet</h3>
+    <p>Learn how to build meals with the right nutrients for your body.</p>
+  </div>
+
+  <div class="card">
+    <i class="fa-solid fa-fire"></i>
+    <h3>Calories Tracking</h3>
+    <p>Track your daily intake and stay aligned with your fitness goals.</p>
+  </div>
+
+  <div class="card">
+    <i class="fa-solid fa-dumbbell"></i>
+    <h3>Goal-Based Plans</h3>
+    <p>Weight loss, gain, or muscle—get a diet plan tailored for you.</p>
+  </div>
+</section>
+
+<section class="calc" id="calc">
+  <h2>Calorie Calculator</h2>
+
+  <form class="form" id="form">
+    <input type="number" id="age" placeholder="Age">
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    
+    <select id="activity">
+      <option value="1.2">Sedentary</option>
+      <option value="1.55">Moderate</option>
+      <option value="1.9">Active</option>
+    </select>
+
+    <button class="full">Calculate</button>
+  </form>
+
+  <div class="result" id="result"></div>
+</section>
+
+<footer>
+  © 2026 MindMate — Smart Nutrition System
+</footer>
+
+<script>
+document.getElementById("form").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  // Get values correctly
+  let age = document.getElementById("age").value;
+  let weight = document.getElementById("weight").value;
+  let height = document.getElementById("height").value;
+  let activity = document.getElementById("activity").value;
+
+  // Convert to numbers
+  age = Number(age);
+  weight = Number(weight);
+  height = Number(height);
+  activity = Number(activity);
+
+  // Validation
+  if(!age || !weight || !height){
+    document.getElementById("result").innerHTML = "⚠️ Please fill all fields";
+    return;
+  }
+
+  // BMR formula
+  let bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  let calories = Math.round(bmr * activity);
+
+  // Show result
+  document.getElementById("result").innerHTML =
+    `Daily Calories: <strong>${calories} kcal</strong>`;
+});
+</script>
+
+</body>
+</html>

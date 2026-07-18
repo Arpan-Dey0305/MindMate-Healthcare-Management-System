@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HealthCare AI Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+      style="border-radius: 100%"
+    />
+    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nav.css') }}"
+    />
+</head>
+<body>
+<style>
+    * {
+    box-sizing: border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#dff7ff,#f5fbff);
+}
+.logo-icon {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon img {
+  width: 100%;
+  height: auto;
+  max-height: 58px;
+  object-fit: contain;
+  display: block;
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logo-text h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.logo-text span {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 520px;
+    height: 82vh;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.header-logo{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.header-logo img{
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #fff;
+    padding: 6px;
+    object-fit: contain;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.chat-page{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:calc(100vh - 82px);
+    padding:30px;
+    margin-top:20px;
+}
+.chat-box {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    background: #f7fbff;
+}
+
+.bot-message,
+.user-message {
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 15px;
+    max-width: 85%;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.bot-message {
+    background: #e8f3ff;
+    color: #123;
+}
+
+.user-message {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+}
+
+.chat-input {
+    display: flex;
+    padding: 12px;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    outline: none;
+}
+
+.chat-input button {
+    margin-left: 8px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-input button:hover {
+    background: #005fcc;
+}
+
+@media(max-width: 500px) {
+    .chat-container {
+        height: 100vh;
+        width: 100%;
+        border-radius: 0;
+    }
+}
+.chat-header{
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #00B894, #0984E3);
+    color: white;
+}
+
+.chat-header h2{
+    margin: 8px 0 5px;
+}
+
+.chat-header p{
+    margin: 0;
+    opacity: .9;
+    font-size: 14px;
+}
+</style>
+    <header class="navbar">
+      <a href="{{url_for('home')}}" class="logo-box"
+        ><div class="logo-icon">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="MindMate Logo"
+          />
+        </div>
+        <div class="logo-text">
+          <h2>MindMate</h2>
+          <span>Care. Support. Empower.</span>
+        </div></a
+      >
+      <nav class="nav-links" id="navLinks">
+        <a href="{{url_for('home')}}" class="active">Home</a>
+        <a href="{{ url_for('home') }}#services">Services</a>
+        <a href="{{ url_for('appointment') }}">Doctor's Appointment</a>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('track_appointments') }}" class="track-btn">
+          Track Appointment
+        </a>
+        {% endif %}
+        <a href="{{url_for('first_aid')}}">First Aid</a>
+        <a href="{{url_for('health_awareness')}}">Awareness</a>
+        <a href="{{ url_for('home') }}#contact">Contact Us</a>
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-btn" onclick="toggleDropdown()">
+            <i class="fa-solid fa-user"></i>
+            {{ session.get('user_name') }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="dropdown-content" id="userDropdown">
+            <a href="{{ url_for('logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">
+          <i class="fa-solid fa-user"></i> Login / Sign Up
+        </a>
+        {% endif %}
+      </nav>
+      <div class="menu-btn" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </header>
+<div class="chat-page">
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="header-logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindMate Logo">
+        </div>
+
+        <h2>MindMate HealthCare Assistant</h2>
+        <p>Your personalized HealthCare assistant</p>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="bot-message">
+            Hello! I am your MindMate HealthCare AI assistant. How can I help you?
+        </div>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="userInput" placeholder="Ask about symptoms, diet, first aid...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+</div>
+
+<script>
+    async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+
+    const message = input.value.trim();
+
+    if (message === "") return;
+
+    
+    chatBox.innerHTML += `<div class="user-message">${message}</div>`;
+    input.value = "";
+
+    chatBox.innerHTML += `<div class="bot-message" id="loading">Typing...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const response = await fetch("/chat-api", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        });
+
+        const data = await response.json();
+
+        
+        document.getElementById("loading").remove();
+
+        
+        let cleanReply = data.reply
+            .replace(/\*\*/g, "")   // **
+            .replace(/\*/g, "")     // *
+            .replace(/###/g, "")
+            .replace(/##/g, "")
+            .replace(/#/g, "")
+            .replace(/`/g, "")
+            .replace(/_/g, "")
+            .replace(/>/g, "")
+            .replace(/\|/g, "")
+            .replace(/\n{2,}/g, "\n")
+            .trim();
+
+       
+        chatBox.innerHTML += `<div class="bot-message">${cleanReply}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch (error) {
+        const loading = document.getElementById("loading");
+        if (loading) loading.remove();
+
+        chatBox.innerHTML += `<div class="bot-message">Error connecting to server.</div>`;
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    
+    document.getElementById("userInput").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+});
+</script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

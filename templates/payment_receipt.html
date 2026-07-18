@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Receipt | MindMate</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      class="favicon"
+      href="static/images/favicon.png"
+      style="border-radius: 100%"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #eef2ff, #e0f7fa);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 25px;
+      }
+
+      .receipt-card {
+        width: 100%;
+        max-width: 720px;
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+      }
+
+      .receipt-header {
+        background: linear-gradient(135deg, #6c63ff, #00bcd4);
+        color: #fff;
+        padding: 28px;
+        text-align: center;
+      }
+      .logo{
+        width:90px;
+        height:90px;
+        object-fit:contain;
+        background:#fff;
+        padding:10px;
+        border-radius:50%;
+        margin:0 auto 15px;
+        display:block;
+        box-shadow:0 8px 20px rgba(0,0,0,.15);
+    }
+
+      .receipt-header h1 {
+        font-size: 30px;
+        margin-bottom: 6px;
+      }
+
+      .success-badge {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 18px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      .receipt-body {
+        padding: 30px;
+      }
+
+      .receipt-title {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      .receipt-title h2 {
+        color: #222;
+        font-size: 24px;
+      }
+
+      .receipt-title p {
+        color: #777;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .info-box {
+        background: #f7f8ff;
+        border: 1px solid #e1e4ff;
+        border-radius: 14px;
+        padding: 15px;
+      }
+
+      .label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 5px;
+      }
+
+      .value {
+        font-size: 15px;
+        color: #222;
+        font-weight: 600;
+        word-break: break-word;
+      }
+
+      .amount-section {
+        background: linear-gradient(135deg, #f5f7ff, #eefcff);
+        border-radius: 18px;
+        padding: 22px;
+        text-align: center;
+        margin: 25px 0;
+        border: 1px dashed #6c63ff;
+      }
+
+      .amount-section p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .amount-section h2 {
+        color: #6c63ff;
+        font-size: 36px;
+        margin-top: 5px;
+      }
+
+      .footer-note {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+      }
+
+      .btn {
+        flex: 1;
+        text-decoration: none;
+        border: none;
+        outline: none;
+        padding: 14px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .print-btn {
+        background: linear-gradient(135deg, #6c63ff, #00bcd4);
+        color: #fff;
+      }
+
+      .back-btn {
+        background: #f1f1f1;
+        color: #333;
+      }
+
+      @page {
+        size: A4;
+        margin: 8mm;
+        }
+
+    @media print {
+    html,
+    body {
+        width: 210mm;
+        min-height: 297mm;
+        background: #fff;
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        display: block;
+    }
+
+    .receipt-card {
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        overflow: visible;
+        page-break-inside: avoid;
+    }
+
+    .receipt-header {
+        padding: 14px 20px;
+    }
+
+    .logo {
+        width: 55px;
+        height: 55px;
+        padding: 6px;
+        margin-bottom: 6px;
+    }
+
+    .receipt-header h1 {
+        font-size: 22px;
+        margin-bottom: 3px;
+        color: #222;
+    }
+
+    .receipt-header p {
+        font-size: 12px;
+    }
+
+    .success-badge {
+        margin-top: 6px;
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .receipt-body {
+        padding: 14px 18px;
+    }
+
+    .receipt-title {
+        margin-bottom: 12px;
+    }
+
+    .receipt-title h2 {
+        font-size: 18px;
+    }
+
+    .receipt-title p {
+        font-size: 11px;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .info-box {
+        padding: 8px 10px;
+        border-radius: 8px;
+    }
+
+    .label {
+        font-size: 10px;
+        margin-bottom: 2px;
+    }
+
+    .value {
+        font-size: 11px;
+    }
+
+    .amount-section {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+    }
+
+    .amount-section p {
+        font-size: 11px;
+    }
+
+    .amount-section h2 {
+        font-size: 24px;
+        margin-top: 2px;
+    }
+
+    .footer-note {
+        font-size: 10px;
+        margin-top: 8px;
+    }
+
+    .btn-group {
+        display: none;
+    }
+    }
+
+      @media (max-width: 600px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="receipt-card">
+      <div class="receipt-header">
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="MindMate Logo"
+        class="logo"
+    >
+        <h1>MindMate</h1>
+        <p>Doctor Appointment Payment Receipt</p>
+        <div class="success-badge">Payment Successful</div>
+      </div>
+
+      <div class="receipt-body">
+        <div class="receipt-title">
+          <h2>Payment Receipt</h2>
+          <p>Your appointment payment has been completed successfully.</p>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="label">Receipt No.</p>
+            <p class="value">MM-{{ receipt.ID }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Appointment ID</p>
+            <p class="value">{{ receipt.ID }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Patient Name</p>
+            <p class="value">{{ receipt.PATIENT_NAME }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Email</p>
+            <p class="value">{{ receipt.EMAIL }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Mobile</p>
+            <p class="value">{{ receipt.MOBILE }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Doctor</p>
+            <p class="value">{{ receipt.DOCTOR }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Appointment Date</p>
+            <p class="value">{{ receipt.APPOINTMENT_DATE }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Appointment Time</p>
+            <p class="value">{{ receipt.APPOINTMENT_TIME }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Consultation Type</p>
+            <p class="value">{{ receipt.CONSULTATION_TYPE }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Payment Status</p>
+            <p class="value">{{ receipt.PAYMENT_STATUS }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Razorpay Payment ID</p>
+            <p class="value">{{ receipt.RAZORPAY_PAYMENT_ID }}</p>
+          </div>
+
+          <div class="info-box">
+            <p class="label">Razorpay Order ID</p>
+            <p class="value">{{ receipt.RAZORPAY_ORDER_ID }}</p>
+          </div>
+        </div>
+
+        <div class="amount-section">
+          <p>Total Amount Paid</p>
+          <h2>₹{{ receipt.DOCTOR_FEE }}</h2>
+        </div>
+
+        <p class="footer-note">
+          Thank you for choosing MindMate. Please keep this receipt for future reference.
+        </p>
+
+        <div class="btn-group">
+          <button onclick="window.print()" class="btn print-btn">
+            Download / Print Receipt
+          </button>
+
+          <a href="{{ url_for('track_appointments') }}" class="btn back-btn">
+            Track Your Appointments
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

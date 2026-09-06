@@ -61,7 +61,7 @@ pip install tensorflow==2.19.0 keras==3.5.0 numpy==1.26.4 pillow flask flask_mai
 ### 1. Create Database:
 ``` sql
 CREATE DATABASE MINDMATE_DB;
-USE MINDMATE_DB;```sql
+USE MINDMATE_DB;
 CREATE DATABASE MINDMATE_DB;
 USE MINDMATE_DB;
 ```
